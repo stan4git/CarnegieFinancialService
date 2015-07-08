@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <package name="action" extends="struts-default">
+	    
+		 <!-- zyj Change Password -->
+		<action name="changecustomerpassword_*" class="action.ChangeCustomerPassword" method="{1}">
+			<result name="needlogin">/login.jsp</result>	
+			<result name="customer-init">/change-password.jsp</result>
+			<result name="fail-customer">/change-password.jsp</result>
+			<result name="success-customer">/change-password.jsp</result>
+			<result name="fail-EV-customer" type="chain">viewaccount_getUserDetail</result>
+			<result name="success-EV-customer" type="chain">viewaccount_getUserDetail</result>
+		</action>
+		
+		<action name="changeemployeepassword_*" class="action.ChangeEmployeePassword" method="{1}">
+			<result name="needlogin">/login.jsp</result>
+			<result name="employee-init">/change-employee-password.jsp</result>
+			<result name="fail-employee">/change-employee-password.jsp</result>
+			<result name="success-employee">/change-employee-password.jsp</result>
+		</action>
+		
+		<action name="login_*" class="action.Login" method="{1}">
+			<result name="success-customer" type="redirect">viewaccount_init.action</result>
+			<result name="success-admin" type="redirect">viewaccount_getUserInfo.action</result>
+			<result name="loginfalse">/login.jsp</result>
+			<result name="needlogin">/login.jsp</result>
+			<result name="noneedlogin" type="redirect">login_directlogin.action</result>
+		</action>
+		
+		
+		<!-- zyj Logout -->
+		<action name="logout_*" class="action.Logout" method="{1}">
+			<result name="out">/login.jsp</result>
+		</action>
+		
+		<!-- zyj View Account -->
+		<action name="viewaccount_*" class="action.ViewAccount" method="{1}">
+			<result name="success-customer">/view-account.jsp</result>
+			<result name="success-admin">/view-customer-account.jsp</result>
+			<result name="success-detail">/view-customer-details.jsp</result>
+			<result name="needlogin">/login.jsp</result>
+			<result name="false" type="chain">viewaccount_init</result>
+			<result name="finish"  type="chain">viewaccount_init</result>
+		</action>
+		
+		
+		<!-- heml Create Fund -->
+		<action name="cf_*" class="action.CreateFund" method="{1}">
+			<result name="initSuccess">/create-fund.jsp</result>
+			<result name="login">/login.jsp</result>
+			<!-- <result name="failure">/create-fund.jsp</result>
+			<result name="success">/create-fund.jsp</result> -->
+			<result name="failure" type="chain">cf_init</result>
+			<result name="success" type="chain">cf_init</result>
+		</action>
+		
+		<!-- heml Fund Research-->
+		<action name="fr_*" class="action.FundResearch" method="{1}">
+			<result name="success-research">/fund-research-details.jsp</result>
+			<result name="success-fund">/fund-research.jsp</result>
+			<result name="fail" type="chain">fr_getFundList</result>
+			<result name="login" type="redirect">/login.jsp</result>
+		</action>
+		
+		<!-- heml Transition Day -->
+		<action name="td_*" class="action.TransitionDay" method="{1}">
+			<result name="initSuccess">/transition-day.jsp</result>
+			<result name="login">/login.jsp</result>
+			<!-- <result name="failure">/transition-day.jsp</result>
+			<result name="finish">/transition-day.jsp</result> -->
+			<result name="failure" type="chain">td_init</result>
+			<result name="finish" type="chain">td_init</result>
+		</action>
+		
+		<!-- stan edited 1.26 -->
+		<action name="requestcheck_*" class="action.RequestCheck" method="{1}">
+			<result name="success">/request-check.jsp</result>
+			<result name="initSuccess">/request-check.jsp</result>
+			<result name="fail">/request-check.jsp</result>
+			<result name="login">/login.jsp</result>
+		</action>
+		
+		<!-- stan edited 1.26 -->
+		<action name="transactionhistory_*" class="action.TransactionHistory" method="{1}">
+			<result name="success">/transaction-history.jsp</result>
+			<result name="login">/login.jsp</result>
+			<result name="initSuccess">/transaction-history.jsp</result>
+			<result name="fail">/result.jsp</result>
+		</action>
+		
+		<!-- stan edited 1.26 -->
+		<action name="customertransactionhistory_*" class="action.CustomerTransactionHistory" method="{1}">
+			<result name="success">/customer-transaction-history.jsp</result>
+			<result name="fail">/result.jsp</result>
+			<result name="login">/login.jsp</result>
+			<result name="initSuccess">/customer-transaction-history.jsp</result>
+		</action>
+		
+		<!-- stan edited 1.26 -->
+		<action name="depositcheck_*" class="action.DepositCheck" method="{1}">
+			<result name="success">/deposit-check.jsp</result>
+			<result name="fail">/deposit-check.jsp</result>
+			<result name="login">/login.jsp</result>
+			<result name="initSuccess">/deposit-check.jsp</result>
+		</action>
+		
+		<!-- michelle buy fund -->
+		<action name="buyfund_*" class="action.BuyFund" method="{1}">
+			<result name="nulluser">/login.jsp</result>
+			<result name="initSuccess">/buy-fund.jsp</result>
+			<result name="fail-searchfund" type="chain">buyfund_init</result>
+			<result name="success-searchfund" type="chain">buyfund_init</result>
+			<result name="finish" type="chain">buyfund_init</result>
+			<result name="false" type="chain">buyfund_init</result>
+			
+		</action>
+		
+		<!-- michelle -->
+		<action name="sellfund_*" class="action.SellFund" method="{1}">
+			<result name="nulluser">/login.jsp</result>
+			<result name="initSuccess">/sell-fund.jsp</result>
+			<result name="fail-searchfund" type="chain">sellfund_init</result>
+			<result name="success-searchfund">/sell-fund.jsp</result>
+			<result name="finish" type="chain">sellfund_init</result>
+			<result name="false" type="chain">sellfund_init</result>
+		</action>
+		
+		<!-- michelle -->	
+		<action name="createemployee_*" class="action.CreateEmployee" method="{1}">
+			<result name="nulluser">/login.jsp</result>
+			<result name="initSuccess">/create-account.jsp</result>
+			<result name="success">/create-account.jsp</result>
+			<result name="fail">/create-account.jsp</result>
+			<result name="login">/login.jsp</result>
+		</action>
+		
+		<!-- stan edited 1.26  michelle 1.28 -->
+		<action name="createcustomer_*" class="action.CreateCustomer" method="{1}">
+			<result name="nulluser">/login.jsp</result>
+			<result name="initSuccess">/create-account.jsp</result>
+			<result name="success">/create-account.jsp</result>
+			<result name="fail">/create-account.jsp</result>
+			<result name="login">/login.jsp</result>
+		</action>
+		
+	</package>
+	
+	
+</struts>

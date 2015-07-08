@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orm.fundPriceHistory">
+
+<resultMap type="model.FundPriceHistory" id="fundHistoryResultMap"> 
+	<id property="fundHistoryId" column="fundhistoryid"/>
+    <result property="fundId" column="fundid"/> 
+    <result property="priceDate" column="pricedate"/> 
+    <result property="price" column="price"/> 
+  </resultMap> 
+  
+<insert id="insertFundPriceHistory" parameterType="model.FundPriceHistory" useGeneratedKeys="true" keyProperty="fundHistoryId">
+insert into FundPriceHistory (fundId,priceDate,price)
+values (#{fundId},#{priceDate},#{price})
+</insert>
+	
+<select id="selectPerFundHistory" parameterType="int" resultMap="fundHistoryResultMap">
+	select * from FundPriceHistory where FundPriceHistory.fundId=#{fundId}
+</select> 
+
+<select id="selectfundHistoryByMap" parameterType="java.util.HashMap" resultMap="fundHistoryResultMap">
+		<![CDATA[
+		     select * from FundPriceHistory where 1=1
+	    ]]>
+		<if test="fundId != null">
+			<![CDATA[
+			  AND FundPriceHistory.fundId = #{fundId}
+			]]>
+		</if>
+
+		<if test="startDate != null and '' != startDate">
+			<![CDATA[
+			  AND FundPriceHistory.priceDate >= #{startDate}
+			]]>
+		</if>
+
+		<if test="endAlarmRaisedTime != null and '' != endAlarmRaisedTime">
+			<![CDATA[
+			  AND FundPriceHistory.priceDate <= #{endDate}
+			]]>
+		</if>
+</select>
+
+</mapper>

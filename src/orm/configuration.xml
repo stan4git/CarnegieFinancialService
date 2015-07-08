@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="User" type="model.User"/>
+		<typeAlias alias="Account" type="model.Account"/>
+		<typeAlias alias="Fund" type="model.Fund"/>
+		<typeAlias alias="FundPriceHistory" type="model.FundPriceHistory"/>
+		<typeAlias alias="Position" type="model.Position"/>
+		<typeAlias alias="Transaction" type="model.Transaction"/>
+	</typeAliases>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver"/>
+				<property name="url" value="jdbc:mysql:///mutualfund"/>
+				<property name="username" value=""/>	
+				<property name="password" value=""/>
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+	 <mapper resource="orm/user.xml"/>
+	 <mapper resource="orm/account.xml"/>
+	 <mapper resource="orm/fund.xml"/>
+	 <mapper resource="orm/fundPriceHistory.xml"/>
+	 <mapper resource="orm/position.xml"/>
+	 <mapper resource="orm/transaction.xml"/>
+	</mappers>
+</configuration>

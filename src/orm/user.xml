@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orm.user">
+
+<resultMap id="userResultMap" type="model.User">
+	<id property="userId" column="userid"/>
+	<result property="userName" column="username"  />
+	<result property="role" column="role"  />
+	<result property="passWord" column="password"  />
+	<result property="lastName" column="lastname"  />
+	<result property="firstName" column="firstname"  />
+	<result property="addrLine1" column="addrline1"  />
+	<result property="addrLine2" column="addrline2"  />
+	<result property="city" column="city"  />
+	<result property="state" column="state"  />
+	<result property="zip" column="zip"  />
+	<association property="account" column="accountid" javaType="Account" select="selectaccountbyuserid"/>
+</resultMap>
+	
+<select id="selectuserbyrole" resultMap="userResultMap">
+	select * from User where role=#{role}
+</select> 
+  
+<select id="selectuserbyusername" resultMap="userResultMap">
+    select * from User where userName=#{userName}
+</select> 
+
+<select id="selectuserbyuserid" resultMap="userResultMap">
+    select * from User where userId=#{userId}
+</select> 
+  
+<update id="updatepassword"  parameterType="model.User">
+	update User set User.passWord=#{passWord} where userId=#{userId};
+</update>
+
+<select id="selectpositionbyuserid" parameterType="int" resultType="model.Position"> 
+	select * from Position where Position.userId=#{userId}
+</select>
+
+<select id="selectaccountbyuserid" parameterType="int" resultType="Account">
+	select * from Account where Account.userId=#{userId}
+</select>
+
+
+<insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId"  keyColumn="userid">
+INSERT INTO User (userName,role,passWord,lastName,firstName,addrLine1,addrLine2,city,state,zip)
+VALUES (#{userName},#{role},#{passWord},#{lastName},#{firstName},#{addrLine1},#{addrLine2},#{city},#{state},#{zip})
+</insert>
+
+</mapper>

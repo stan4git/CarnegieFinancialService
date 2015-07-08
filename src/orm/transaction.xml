@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orm.transaction">
+
+<resultMap type="model.Transaction" id="transactionResultMap">
+	<id property="transactionId" column="transactionid"/>	
+	<result property="userId" column="userid"  />
+	<result property="accountId" column="accountid"  />
+	<result property="fundId" column="fundid"  />
+	<result property="shares" column="shares"  />
+	<result property="transactionType" column="transactiontype"  />
+	<result property="amount" column="amount"  />
+	<result property="price" column="price"  />
+	<result property="status" column="status"  />
+	<result property="executeDate" column="executedate"  />
+	<result property="userName" column="username"  />
+	<result property="fundName" column="fundname"  />
+	<result property="errorMessage" column="errormessage"  />
+	<result property="isLock" column="islock"  />
+</resultMap>
+
+
+<select id="selectTransactionsByUserName" parameterType="String" statementType="PREPARED" resultMap="transactionResultMap">
+	select * from transaction where userName=#{userName}
+</select>
+
+<select id="selectTransactionsByUserId" parameterType="String" statementType="PREPARED" resultMap="transactionResultMap">
+	select * from transaction where userId=#{userId}
+</select>
+
+<!-- Michelle 01/26 add fundname -->
+<insert id="createTransaction" parameterType="Transaction" useGeneratedKeys="true" keyProperty="transactionId" keyColumn="transactionid">
+  insert into transaction(userId, userName, fundId, fundName, accountId,positionId, transactionType, shares, amount, status, executeDate) 
+		values(#{userId},#{userName},#{fundId},#{fundName}, #{accountId},#{positionId}, #{transactionType}, #{shares},#{amount}, #{status}, #{executeDate})
+</insert>
+
+	
+<select id="selectTransactionsByFundId" parameterType="int" resultMap="transactionResultMap">
+	select * from Transaction 
+	where Transaction.fundId=#{fundId} 
+		and Transaction.status=0 
+		and Transaction.isLock=0 
+		Order By Transaction.transactionId
+</select> 
+
+<select id="selectTransactionsByFundIdForLock" parameterType="int" resultMap="transactionResultMap">
+	select * from Transaction where Transaction.fundId=#{fundId} and Transaction.status=0 and Transaction.isLock=1 Order By Transaction.transactionId
+</select> 
+
+<select id="selectAllPendingTransactions" resultMap="transactionResultMap">
+	select * from Transaction where Transaction.status=0 and Transaction.isLock=0 Order By Transaction.transactionId
+</select> 
+
+<update id="updateTransForTD" parameterType="model.Transaction">
+  update Transaction set
+    Transaction.shares = #{shares},
+    Transaction.price = #{price},
+    Transaction.executeDate = #{executeDate},
+    Transaction.amount = #{amount},
+    Transaction.status = #{status},
+    Transaction.errorMessage= #{errorMessage}
+  where transactionId = #{transactionId}
+</update>
+
+
+<update id="updateTransactions" parameterType="model.Transaction">
+  update Transaction set
+    shares = #{shares},
+    price = #{price},
+    executeDate = #{executeDate},
+    amount = #{amount},
+    status = #{status}
+  where transactionId = #{transactionId}
+</update>
+
+<select id="selectCurrentMaxTime" resultType="java.util.Date">
+	select MAX(Transaction.executeDate) from Transaction;
+</select> 
+
+<update id="lockTransactionTable">
+	update Transaction set
+		isLock= 1
+	where Transaction.status=0;
+</update>
+
+<update id="unLockTransactionTable">
+	update Transaction set
+		isLock= 0
+	where Transaction.isLock=1
+</update>
+	
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orm.account">
+
+<resultMap  id="accountResultMap" type="model.Account">
+	<id property="accountId" column="accountid"/>
+	<result property="userId" column="userid"/>
+	<result property="balance" column="balance"/>
+	<result property="frozenBalance" column="frozenbalance"/>
+	<result property="availBalance" column="availbalance"/>
+	<result property="lastTradingDay" column="lasttradingday"/>
+	<result property="lastUpadateTime" column="lastupadatetime"/>
+	<result property="isLock" column="islock"/>
+</resultMap>
+
+<insert id="insertAccount" parameterType="Account" useGeneratedKeys="true" keyProperty="accountId"  keyColumn="accountid">
+INSERT INTO Account (userId,balance,frozenBalance,availBalance)
+VALUES (#{userId},#{balance},#{frozenBalance},#{availBalance})
+</insert>	
+	
+<select id="selectAccountByUserId" parameterType="int" resultMap="accountResultMap">
+	select * from account where userId=#{userId}
+</select>
+
+<select id="selectAvailBalanceByUserId" parameterType="int" resultType="long">
+	select availBalance from Account where userId=#{userId}
+</select>
+
+<update id="checkUpdate" parameterType="model.Account">
+	update account set
+		balance=#{balance},
+		availBalance=#{availBalance}
+	where userId=#{userId}
+</update>
+
+<select id="selectaccountbyaccountid" parameterType="int" resultType="model.Account">
+    select * from Account where accountId=#{accountId} and isLock=0
+</select> 
+
+<select id="selectaccountbyaccountidForLock" parameterType="int" resultType="model.Account">
+    select * from Account where accountId=#{accountId} and isLock=1
+</select> 
+
+<update id="lockAccountTable" parameterType="int">
+	update Account set
+		isLock= 1
+	where accountId=#{accountId}
+</update>
+
+<update id="unLockAccountTable" parameterType="int">
+	update Account set
+		isLock= 0
+	where accountId=#{accountId}
+</update>
+
+
+<update id="updateAccount" parameterType="model.Account">
+  update Account set
+    Account.balance = #{balance},
+    Account.frozenBalance = #{frozenBalance},
+    Account.availBalance = #{availBalance},
+    Account.lastTradingDay = #{lastTradingDay}
+  where Account.accountId = #{accountId}
+</update>
+	
+</mapper>

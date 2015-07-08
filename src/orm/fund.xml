@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orm.fund">
+
+<resultMap  id="fundResultMap" type="model.Fund">
+	<id property="fundId" column="fundid"/>
+	<result property="fundName" column="fundname"/>
+	<result property="description" column="description"/>
+	<result property="ticker" column="ticker"/>
+	<result property="fundValue" column="fundvalue"/>
+	<result property="lastTradingDate" column="lasttradingdate"/>
+	<result property="isLock" column="islock"/>
+</resultMap>
+
+<!-- <insert id="insertFund" parameterType="Fund" useGeneratedKeys="true" keyProperty="fundid">
+  insert into Fund (fundName,ticker,description,fundValue)
+  values (#{fundName},#{ticker},#{description},#{fundValue})
+</insert> -->
+
+<insert id="insertFund" parameterType="Fund" useGeneratedKeys="true" keyProperty="fundId"  keyColumn="fundid">
+INSERT INTO Fund (fundName,ticker,description,fundValue)
+VALUES (#{fundName},#{ticker},#{description},#{fundValue})
+<!-- <selectKey keyProperty="fundId" resultType="java.lang.Integer" order="AFTER">
+SELECT max(fundId) from Fund
+</selectKey> -->
+</insert>
+
+
+<select id="selectfundbyfundid" parameterType="int" resultType="Fund">
+	select * from Fund where Fund.fundid=#{fundId}
+</select>
+
+<select id="selectfundbyfundname" parameterType="String" resultType="Fund">
+	select * from Fund where Fund.fundName=#{fundName}
+</select>
+
+<select id="selectfundbytickerforJudge" parameterType="String" resultType="Fund">
+	select * from Fund where Fund.ticker=#{ticker}
+</select>
+
+<select id="selectAllFund" resultMap="fundResultMap">
+	select * from Fund Order By Fund.fundId desc
+</select>  
+
+<select id="selectAllFundForTD" resultMap="fundResultMap">
+	select * from Fund where Fund.isLock=0 Order By Fund.fundId desc
+</select>  
+
+<select id="selectfundByMap" parameterType="java.util.HashMap" resultType="model.Fund">
+		<![CDATA[
+		     select * from Fund where 1=1
+	    ]]>
+		<if test="fundName != null and '' != fundName">
+			<![CDATA[
+			  AND Fund.fundName = #{fundName}
+			]]>
+		</if>
+
+		<if test="ticker != null and '' != ticker">
+			<![CDATA[
+			  AND Fund.ticker = #{ticker}
+			]]>
+		</if>
+
+		<!-- <if test="startDate != null and '' != startDate">
+			<![CDATA[
+			  AND Fund.lastTradingDate >= #{startDate}
+			]]>
+		</if>
+
+		<if test="endAlarmRaisedTime != null and '' != endAlarmRaisedTime">
+			<![CDATA[
+			  AND Fund.lastTradingDate <= #{endDate}
+			]]>
+		</if> -->
+</select>
+
+<update id="updateFund" parameterType="model.Fund">
+  update Fund set
+    Fund.fundValue = #{fundValue},
+    Fund.lastTradingDate = #{lastTradingDate}
+  where Fund.fundId = #{fundId}
+</update>
+
+<select id="selectFundByCondition" parameterType="Fund" resultType="model.Fund"> 
+	select * from Fund where Fund.fundName=#{fundName} or Fund.ticker=#{ticker}
+</select>
+
+<update id="lockFundTable" parameterType="int">
+	update Fund set Fund.isLock= 1
+</update>
+
+<update id="unLockFundTable" parameterType="int">
+	update Fund set Fund.isLock= 0
+</update>
+
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="orm.position">
+
+<resultMap  id="positionResultMap" type="model.Position">
+	<id property="positionId" column="positionid"/>
+	<result property="userId" column="userid"/>
+	<result property="userName" column="username"/>
+	<result property="fundId" column="fundid"/>
+	<result property="shares" column="shares"/>
+	<result property="frozenShares" column="frozenshares"/>
+	<result property="availShares" column="availshares"/>
+	<result property="value" column="value"/>
+	<result property="ticker" column="ticker"/>
+	<result property="fundName" column="fundname"/>
+	<result property="isLock" column="islock"/>
+	<association property="fund" column="fundid" javaType="Fund" select="selectPositionAndFundByUserId"/>
+</resultMap>
+
+<select id="selectPositionAndFundByUserId" parameterType="int" resultMap="positionResultMap">  
+     select Position.shares,Position.positionId,Fund.fundName,Fund.ticker,Fund.fundValue from Position left join Fund on Position.fundId=Fund.fundId where Position.userId=#{userId}  
+</select>  
+
+<select id="selectPositionByCondition" parameterType="Position" resultType="model.Position"> 
+	select * from Position where Position.fundId=#{fundId} and Position.userId=#{userId} and Position.isLock=0
+</select>
+
+<select id="selectPositionByConditionForLock" parameterType="Position" resultType="model.Position"> 
+	select * from Position where Position.fundId=#{fundId} and Position.userId=#{userId} and Position.isLock=1
+</select>
+
+<select id="selectPositionByFundName" parameterType="java.lang.String" resultType="model.Position">
+    select * from Position where fundName=#{fundName} 
+</select>
+
+<update id="updatePositionByTD" parameterType="model.Position">
+  update Position set
+    shares = #{shares},	
+	availShares = #{availShares},
+    frozenShares = #{frozenShares}
+  where positionId = #{positionId}
+</update>
+
+<insert id="insertPositionByTD" parameterType="Position" useGeneratedKeys="true" keyProperty="positionId" keyColumn="positionid">
+  INSERT INTO  Position (userId,fundId,shares,availShares)
+  VALUES (#{userId},#{fundId},#{shares},#{availShares})
+</insert>
+
+<delete id="deletePositionByTD" parameterType="int">
+         delete from Position where positionId = #{positionId}
+</delete>
+
+<!-- Zhuo -->
+<select id="selectAllPositions" parameterType="Position" resultType="model.Position">
+	select * from position where userId = #{userId}
+</select> 
+
+
+<select id="selectPositionByPositionId" parameterType="Position" resultType="model.Position"> 
+	select * from Position where Position.positionId=#{positionId}
+</select>
+
+<update id="lockPositionTable" parameterType="int">
+	update Position set
+		isLock= 1
+	where positionId=#{positionId}
+</update>
+
+<update id="unLockPositionTable" parameterType="int">
+	update Position set
+		isLock= 0
+	where positionId=#{positionId}
+</update>
+
+</mapper>
